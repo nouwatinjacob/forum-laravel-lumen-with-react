@@ -24,7 +24,6 @@ class UsersController extends Controller
         $name = $request->input('name');
         $email = $request->input('email');
         $password = $hasher->make($request->input('password'));
-        dd($password);
         $avatar = $request->input('avatar');
         $user = User::create([
             'email' => $email,
