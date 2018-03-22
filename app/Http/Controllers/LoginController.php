@@ -34,7 +34,7 @@ class LoginController extends Controller
                     return response($res);
                 }
             } else {
-                $res['success'] = true;
+                $res['success'] = false;
                 $res['message'] = 'You email or password incorrect!';
                 return response($res);
             }
