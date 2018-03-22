@@ -22,3 +22,4 @@ $router->post('/category/create', 'CategoriesController@create');
 $router->post('/category/{id}/update', 'CategoriesController@update');
 $router->get('/category/{id}/delete', 'CategoriesController@delete');
 $router->get('/categories', 'CategoriesController@showAllCategory');
+$router->get('/topics', 'TopicsController@showAllTopics');
