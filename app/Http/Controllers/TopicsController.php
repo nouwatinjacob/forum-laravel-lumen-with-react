@@ -14,4 +14,5 @@ class TopicsController extends Controller
 
     return response()->json($topics, $categories);
   }
+  
 }
