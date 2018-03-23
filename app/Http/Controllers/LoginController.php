@@ -11,33 +11,41 @@ class LoginController extends Controller
      *
      * When user success login will retrive callback as api_token
      */
-    public function index(Request $request)
+    public function login(Request $request)
     {
         $hasher = app()->make('hash');
- 
-        $email = $request->input('email');
         $password = $request->input('password');
-        $login = User::where('email', $email)->first();
- 
-        if ( ! $login) {
-            $res['success'] = false;
-            $res['message'] = 'Your email or password incorrect!';
-            return response($res);
-        } else {
-            if ($hasher->check($password, $login->password)) {
-                $api_token = sha1(time());
-                $create_token = User::where('id', $login->id)->update(['api_token' => $api_token]);
-                if ($create_token) {
-                    $res['success'] = true;
-                    $res['api_token'] = $api_token;
-                    $res['message'] = $login;
-                    return response($res);
-                }
-            } else {
-                $res['success'] = false;
-                $res['message'] = 'You email or password incorrect!';
-                return response($res);
-            }
+        $user = User::where('email', $request->email)->first();
+        if(!$user) {
+            return response()->json(['status' => 'error', 'message' => 'User Not Found'], 404);
         }
+        else{
+            if($hasher->check($password, $user->password))
+            {
+                $api_token = str_random(50);
+                $create_token = $user->update(['api_token' => $api_token]);
+                if ($create_token){
+                    return response()->json(['status' => 'success', 'user' => $user], 200);
+                }                
+            }
+            else {
+                return response()->json(['status' => 'error', 'message' => 'Invalid Credential!'], 401);
+            }
+        }        
+    }
+
+    public function logout(Request $request)
+    {
+        $api_token = $request->api_token;
+        $user = User::where('api_token', $api_token)->first();
+
+        if(!$user) {
+            return response()->json(['status' => 'error', 'message' => 'Not Logged in'], 401);
+        }
+
+        $user->api_token = null;
+        $user->save();
+
+        return response()->json(['status' => 'success', 'message' => 'You are now logged out'], 200);
     }
 }

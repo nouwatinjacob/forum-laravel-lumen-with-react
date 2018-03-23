@@ -1,12 +1,18 @@
 <?php
 namespace App\Http\Controllers;
  
+use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use App\User;
  
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+
+    }
+    
     /**
      * Register new user
      *
@@ -16,44 +22,24 @@ class UsersController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'username' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required'
         ]);
- 
+        
         $hasher = app()->make('hash');
-        $name = $request->input('name');
-        $email = $request->input('email');
-        $password = $hasher->make($request->input('password'));
-        $avatar = $request->input('avatar');
+        $name = $request->name;
+        $password = $hasher->make($request->password);
         $user = User::create([
-            'email' => $email,
-            'password' => $password,
-            'avatar' => $avatar,
+            'name' => $name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'api_token' => str_random(50),      
         ]);
- 
-        $res['success'] = true;
-        $res['message'] = 'Success register!';
-        $res['data'] = $user;
-        return response($res);
+        $user->password = $password;
+        $user->save();
+         
+        return response()->json(['status' => 'success', 'user'=>$user], 200);
     }
-    /**
-     * Get user by id
-     *
-     * URL /user/{id}
-     */
-    public function get_user(Request $request, $id)
-    {
-        $user = User::where('id', $id)->get();
-        if ($user) {
-              $res['success'] = true;
-              $res['message'] = $user;
- 
-              return response($res);
-        }else{
-          $res['success'] = false;
-          $res['message'] = 'Cannot find user!';
- 
-          return response($res);
-        }
-    }
+    
 }

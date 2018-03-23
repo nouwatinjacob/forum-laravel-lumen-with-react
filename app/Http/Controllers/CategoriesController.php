@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth', ['only' => 'create', 'update', 'delete']);
+  }
+
+
   public function showAllCategory()
   {
     return response()->json(Category::all());
@@ -35,15 +41,18 @@ class CategoriesController extends Controller
         'name' => 'required'
       ]);
 
-      $category = Category::findOrFail($id);
+      $category = Category::find($id);
+      if(!category) {
+      return response()->json(['status' => 'error', 'message' => 'Category not found'], 404);        
+      }
+      
       $category->update($request->all());
-
-      $res['success'] = true;
-      $res['code'] = 200;
-      $res['message'] = 'Category updated succesfully!';
-      $res['data'] = $category;
-      return response($res);
-        
+      
+      return response()->json([
+        'status' => 'success',
+        'message' => 'Category updated succesfully!',
+        'data' => $category
+      ], 200);          
     }
 
     public function delete($id)
