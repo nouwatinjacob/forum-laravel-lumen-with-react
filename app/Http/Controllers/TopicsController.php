@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class TopicsController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth', ['except' => 'getAllTopics']);
+  }
+
+
   public function getAllTopics()
   {
     $topics = Topic::orderBy('created_at', 'desc')->paginate(5);
