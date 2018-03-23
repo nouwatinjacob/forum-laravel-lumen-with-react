@@ -15,7 +15,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->post('/login', 'LoginController@index');
+$router->post('/login', 'LoginController@login');
+$router->post('/logout', 'LoginController@logout');
 $router->post('/register', 'UsersController@register');
 $router->get('/user/{id}', ['middleware' => 'auth', 'uses' =>  'UsersController@get_user']);
 $router->post('/category/create', 'CategoriesController@create');
