@@ -19,7 +19,7 @@ class TopicsController extends Controller
   {
     $topics = Topic::orderBy('created_at', 'desc')->paginate(5);
     // $categories = Category::all();   
-    return response()->json(['status' => 'success', 'topics' => $topics], 200);
+    return response()->json(['status' => 'success', 'data' => $topics], 200);
   }
 
   public function create(Request $request)
@@ -39,8 +39,8 @@ class TopicsController extends Controller
 
     return response()->json([
       'status' => 'success', 
-      'message' => 'Topic successfully created',
-      'topic' => $topic
+      'message' => 'You stated new Topic successfully',
+      'data' => $topic
     ], 201);
   }
   
@@ -50,6 +50,22 @@ class TopicsController extends Controller
     if(!$topic){
       return response()->json(['status' => 'error', 'message' => 'Topic not found'], 404);
     }
-    return response()->json(['status' => 'success', 'topic' => $topic], 200);
+    return response()->json(['status' => 'success', 'data' => $topic], 200);
   }
+
+  public function topicsOfACategory($id)
+  {
+    $topic = Topic::where('category_id', $id)->paginate(5);
+    $category = Category::find($id);
+
+    if($topic->count() > 0 && $category) {
+      return response()->json(['status' => 'success', 'category' => $category, 'data' => $topic], 200);
+    }
+    else if(!$category){
+      return response()->json(['status' => 'error', 'message' => 'Category not found'], 404);
+    }
+    else {
+      return response()->json(['status' => 'error', 'message' => 'This Category has no Topic'], 404);
+    }
+  } 
 }
