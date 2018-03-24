@@ -9,7 +9,7 @@ class CategoriesController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth', ['only' => 'create', 'update', 'delete']);
+    // $this->middleware('auth', ['only' => 'create', 'update', 'delete']);
   }
 
 
@@ -41,8 +41,8 @@ class CategoriesController extends Controller
         'name' => 'required'
       ]);
 
-      $category = Category::find($id);
-      if(!category) {
+      $category = Category::where('id', $id)->first();
+      if(!$category) {
       return response()->json(['status' => 'error', 'message' => 'Category not found'], 404);        
       }
       
