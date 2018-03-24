@@ -18,6 +18,7 @@ class CategoriesController extends Controller
     return response()->json(Category::all());
   }
 
+
   public function create(Request $request)
     {
       $this->validate($request, [
@@ -28,12 +29,13 @@ class CategoriesController extends Controller
         'name' => $request->name
         ]);
 
-      $res['success'] = true;
-      $res['code'] = 201;
-      $res['message'] = 'Category saved succesfully!';
-      $res['data'] = $category;
-      return response($res);
+      return response()->json([
+        'status' => 'success', 
+        'message' => 'Category saved succesfully!',
+        'data' => $topic
+      ], 201);
     }
+
 
     public function update($id, Request $request)
     {
@@ -55,21 +57,23 @@ class CategoriesController extends Controller
       ], 200);          
     }
 
+
     public function delete($id)
     {
-      $category = Category::find($id);
-      if(!$category){
-        $res['success'] = false;
-        $res['code'] = 400;
-        $res['message'] = 'Category not found';
-        return response($res);
+      $category = Category::where('id',$id)->first();
+      if(!$category){        
+        return response()->json([
+          'status' => 'error', 
+          'message' => 'Category not found'
+        ], 404);
       }
       else{
         $category->delete();
-        $res['success'] = true;
-        $res['code'] = 200;
-        $res['message'] = 'Deleted Successfully';
-        return response($res);
+
+        return response()->json([
+          'status' => 'success', 
+          'message' => 'Deleted Successfully'
+        ], 200);
       }
       
     }
