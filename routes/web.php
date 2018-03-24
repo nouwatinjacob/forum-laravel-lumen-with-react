@@ -15,16 +15,24 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+
+$router->group(['middleware' => 'auth'], function($router) {
+    $router->post('/logout', 'LoginController@logout');
+    
+    $router->post('/category/create', 'CategoriesController@create');
+    $router->post('/category/{id}/update', 'CategoriesController@update');
+    $router->get('/category/{id}/delete', 'CategoriesController@delete');
+});
+
 $router->post('/login', 'LoginController@login');
-$router->post('/logout', 'LoginController@logout');
+
 $router->post('/register', 'UsersController@register');
 
-$router->get('/topics', 'TopicsController@getAllTopics');
 $router->post('/topic/create', 'TopicsController@create');
+$router->get('/topics', 'TopicsController@getAllTopics');
+
 $router->get('/topic/{id}', 'TopicsController@show');
 $router->get('/topic/{id}/category', 'TopicsController@topicsOfACategory');
 
-$router->post('/category/create', 'CategoriesController@create');
-$router->post('/category/{id}/update', 'CategoriesController@update');
-$router->get('/category/{id}/delete', 'CategoriesController@delete');
+
 $router->get('/categories', 'CategoriesController@showAllCategory');
