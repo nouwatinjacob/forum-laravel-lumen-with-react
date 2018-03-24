@@ -32,7 +32,7 @@ class CategoriesController extends Controller
       return response()->json([
         'status' => 'success', 
         'message' => 'Category saved succesfully!',
-        'data' => $topic
+        'data' => $category
       ], 201);
     }
 
