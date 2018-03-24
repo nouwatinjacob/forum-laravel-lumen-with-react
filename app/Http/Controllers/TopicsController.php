@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Topic;
 use App\Category;
 use App\Reply;
+use App\TopicLike;
 use Auth;
 
 class TopicsController extends Controller
@@ -77,5 +78,72 @@ class TopicsController extends Controller
     else {
       return response()->json(['status' => 'error', 'message' => 'This Category has no Topic'], 404);
     }
-  } 
+  }
+  
+  
+  public function like($id)
+    {   
+        $liked = TopicLike::where('user_id', Auth::id())->where('topic_id', $id)->where('like', 1)->first();
+        $unliked = TopicLike::where('user_id', Auth::id())->where('topic_id', $id)->where('like', 0)->first();
+        if($liked){
+            return response()->json(['message' => 'You currently liked this Topic'], 200);
+        }
+
+        elseif($unliked)
+        {
+            $unliked->delete();
+            TopicLike::create([
+                'user_id' => Auth::id(),
+                'topic_id' => $id,
+                'like' => 1
+            ]);
+            
+            return response()->json(['status' => 'success', 'message' => 'You now liked this Topic'], 201);
+        }
+
+        else{
+             TopicLike::create([
+                'user_id' => Auth::id(),
+                'topic_id' => $id,
+                'like' => 1
+            ]);
+            
+            return response()->json(['status' => 'success', 'message' => 'You now liked this Topic'], 201);
+        }
+        
+    }
+
+
+    public function unlike($id)
+    {
+        $liked = TopicLike::where('user_id', Auth::id())->where('topic_id', $id)->where('like', 1)->first();
+        $unliked = TopicLike::where('user_id', Auth::id())->where('topic_id', $id)->where('like', 0)->first();
+
+        if($liked){
+            $liked->delete();
+
+            TopicLike::create([
+                'user_id' => Auth::id(),
+                'topic_id' => $id,
+                'like' => 0
+            ]);
+
+            return response()->json(['status' => 'success', 'message' => 'You now unliked this Topic'], 201);
+        }
+        elseif($unliked){
+            
+            return response()->json(['message' => 'This Topic is currently unliked by you'], 200);
+        }
+        else{
+            TopicLike::create([
+                'user_id' => Auth::id(),
+                'topic_id' => $id,
+                'like' => 0
+            ]);
+            
+            return response()->json(['status' => 'success', 'message' => 'You now unliked this Topic'], 201);        
+          }        
+        
+    }
+
 }
