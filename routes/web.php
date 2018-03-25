@@ -35,4 +35,8 @@ $router->group(['middleware' => 'auth'], function($router) {
     $router->post('/category/{id}/update', 'CategoriesController@update');
     $router->get('/category/{id}/delete', 'CategoriesController@delete');
     $router->post('/reply/create/{id}', 'RepliesController@store');
+    $router->post('topic/like/{id}', 'TopicsController@like');
+    $router->post('topic/unlike/{id}', 'TopicsController@unlike');
+    $router->post('reply/like/{id}', 'RepliesController@like');
+    $router->post('reply/unlike/{id}', 'RepliesController@unlike');
 });
